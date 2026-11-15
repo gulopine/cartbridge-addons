@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Rooms Display Test</title>
+    <style>
+      :root {
+        --bg: #0f141a;
+        --fg: #f2f7ff;
+        --muted: #97a7bd;
+        --accent: #6fe3ff;
+      }
+
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(circle at 20% 20%, #172331, var(--bg));
+        color: var(--fg);
+        font-family: "Avenir Next", "Segoe UI", sans-serif;
+      }
+
+      .wrap {
+        box-sizing: border-box;
+        min-height: 100%;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        gap: 14px;
+        padding: 18px;
+      }
+
+      .status {
+        font-size: 14px;
+        color: var(--muted);
+        letter-spacing: 0.02em;
+      }
+
+      .room {
+        display: grid;
+        place-items: center;
+        text-align: center;
+        font-size: clamp(36px, 7vw, 88px);
+        line-height: 1.05;
+        font-weight: 800;
+        letter-spacing: 0.03em;
+        color: var(--fg);
+        text-shadow: 0 0 18px rgba(111, 227, 255, 0.25);
+      }
+
+      .hint {
+        font-size: 13px;
+        color: var(--accent);
+        opacity: 0.9;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <div id="status" class="status">Connecting to CartBridge...</div>
+      <div id="room" class="room">Waiting for timer data</div>
+      <div class="hint">Listening for timer</div>
+    </main>
+
+    <script src="http://127.0.0.1:17423/ui/sdk.js"></script>
+    <script>
+      const statusEl = document.getElementById("status");
+      const roomEl = document.getElementById("room");
+
+      const bridge = window.CartBridge.create({
+        transport: "auto",
+        surface: "display",
+      });
+
+      bridge.onStatus((status) => {
+        statusEl.textContent = "Bridge status: " + status;
+      });
+
+      bridge.onError((err) => {
+        statusEl.textContent = "Bridge error: " + (err.code || "unknown");
+      });
+
+      bridge.ready().then(() => {
+        bridge.subscribe("timer", ({ payload, t }) => {
+          let minutes = payload.minutes.toString().padStart(2, "0");
+          let seconds = payload.seconds.toString().padStart(2, "0");
+          let centiseconds = payload.centiseconds.toString().padStart(2, "0");
+          roomEl.textContent = String(`${minutes}:${seconds}.${centiseconds}`);
+          statusEl.textContent = "Updated at t=" + Number(t || 0).toFixed(3) + "s";
+        });
+      });
+    </script>
+  </body>
+</html>
