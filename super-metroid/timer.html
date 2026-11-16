@@ -86,7 +86,7 @@
           let hours = payload.hours.toString().padStart(2, "0");
           let minutes = payload.minutes.toString().padStart(2, "0");
           let seconds = payload.seconds.toString().padStart(2, "0");
-          let subseconds = parseInt(payload.frames / 60 * 100)).toString().padStart(2, "0");
+          let subseconds = parseInt(payload.frames / 60 * 100).toString().padStart(2, "0");
           roomEl.textContent = String(`${hours}:${minutes}:${seconds}.${subseconds}`);
           statusEl.textContent = "Updated at t=" + Number(t || 0).toFixed(3) + "s";
         });
