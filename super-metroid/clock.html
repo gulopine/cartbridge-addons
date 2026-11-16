@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Rooms Display Test</title>
+    <title>Super Metroid In-Game Clock</title>
     <style>
       :root {
         --bg: #0f141a;
@@ -59,14 +59,14 @@
   <body>
     <main class="wrap">
       <div id="status" class="status">Connecting to CartBridge...</div>
-      <div id="room" class="room">Waiting for timer data</div>
-      <div class="hint">Listening for timer</div>
+      <div id="room" class="room">Waiting for clock data</div>
+      <div class="hint">Listening for clock</div>
     </main>
 
     <script src="http://127.0.0.1:17423/ui/sdk.js"></script>
     <script>
       const statusEl = document.getElementById("status");
-      const roomEl = document.getElementById("room");
+      const clockEl = document.getElementById("clock");
 
       const bridge = window.CartBridge.create({
         transport: "auto",
@@ -82,12 +82,12 @@
       });
 
       bridge.ready().then(() => {
-        bridge.subscribe("timer", ({ payload, t }) => {
+        bridge.subscribe("clock", ({ payload, t }) => {
           let hours = payload.hours.toString().padStart(2, "0");
           let minutes = payload.minutes.toString().padStart(2, "0");
           let seconds = payload.seconds.toString().padStart(2, "0");
           let subseconds = parseInt(payload.frames / 60 * 100).toString().padStart(2, "0");
-          roomEl.textContent = String(`${hours}:${minutes}:${seconds}.${subseconds}`);
+          clockEl.textContent = String(`${hours}:${minutes}:${seconds}.${subseconds}`);
           statusEl.textContent = "Updated at t=" + Number(t || 0).toFixed(3) + "s";
         });
       });
