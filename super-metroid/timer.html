@@ -83,10 +83,11 @@
 
       bridge.ready().then(() => {
         bridge.subscribe("timer", ({ payload, t }) => {
+          let hours = payload.hours.toString().padStart(2, "0");
           let minutes = payload.minutes.toString().padStart(2, "0");
           let seconds = payload.seconds.toString().padStart(2, "0");
-          let centiseconds = payload.centiseconds.toString().padStart(2, "0");
-          roomEl.textContent = String(`${minutes}:${seconds}.${centiseconds}`);
+          let subseconds = (payload.frames / 60).toString().padStart(2, "0");
+          roomEl.textContent = String(`${hours}:${minutes}:${seconds}.${subseconds}`);
           statusEl.textContent = "Updated at t=" + Number(t || 0).toFixed(3) + "s";
         });
       });
